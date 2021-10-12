@@ -1,15 +1,18 @@
 {
-    "name": "owner/user-controller",
-    "description": "Generator controller of users",
+    "name": "laravell/users",
+    "description": "Validates users",
     "type": "library",
-    "require": {
-        "illuminate/database": "9.x-dev"
-    },
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Owner\\UserController\\": "src/"
+            "Laravell\\Users\\": "src/"
         }
     },
-    "minimum-stability": "dev"
+    "authors": [
+        {
+            "name": "javierSolanoP",
+            "email": "jsmolano24@misena.edu.co"
+        }
+    ],
+    "require": {}
 }

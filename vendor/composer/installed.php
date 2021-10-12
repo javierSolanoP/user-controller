@@ -1,11 +1,11 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => NULL,
+        'reference' => 'e2cd8663137cdcad84d6efcf24614e4d6f325845',
         'name' => 'owner/user-controller',
         'dev' => true,
     ),
@@ -108,12 +108,12 @@
             'dev_requirement' => false,
         ),
         'owner/user-controller' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => NULL,
+            'reference' => 'e2cd8663137cdcad84d6efcf24614e4d6f325845',
             'dev_requirement' => false,
         ),
         'psr/container' => array(
