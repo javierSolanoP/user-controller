@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Module_User\Class;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Trait\MethodUser;
 
@@ -14,6 +14,6 @@ class Usuario {
                                 private $telephone = ''
                                 ){}
 
-    //Se importa los metodos de usuario: 
+    // Se utiliza el trait 'MethodUser', para validar las propiedades: 
     use MethodUser;
 }

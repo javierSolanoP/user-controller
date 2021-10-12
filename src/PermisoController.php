@@ -13,8 +13,7 @@ class PermisoController extends Controller
 {
     // Metodo para retornar todos los registros de la tabla de la DB: 
     public function index()
-    {
-        
+    { 
         // Realizamos la consulta a la tabla de la DB:
         $model = DB::table('permisos')
 
@@ -40,6 +39,50 @@ class PermisoController extends Controller
 
     }
 
+    // Metodo para retornar todos los permisos agrupados por roles: 
+    public function roles()
+    {
+        // Realizamos la consulta a la tabla de la DB:
+        $model = DB::table('permisos');
+
+        // Validamos que existan los registro en la tabla de la DB:
+        $validatePemission = $model->get();
+
+        // Si existe, agrupamos los permisos por roles y retornamos los registros: 
+        if(count($validatePemission) != 0){
+
+            // Realizamos la consulta a la tabla del modelo 'Role': 
+            $registers = $model->join('roles', 'roles.id_role', '=', 'permisos.role_id')
+
+                                // Seleccionamos los campos que se requieren: 
+                                ->select('permisos.permission_name as permission', 'roles.role_name as role')
+
+                                // Obtenemos todos los permisos: 
+                                ->get()
+                                
+                                // Agrupamos los permisos por roles:
+                                ->groupBy('role');
+
+            // Declaramos el array 'roles', para almacenar los roles con indice numerico: 
+            $roles = [];
+
+            // Iteramos los usuarios almacenados en el array 'registers': 
+            foreach($registers as $role){
+
+                // Almacenamos el role en el array 'roles': 
+                $roles[] = $role;
+
+            }
+
+            // Retornamos la respuesta:
+            return ['query' => true, 'roles' => $roles];
+
+        }else{
+            // Retornamos el error:
+            return ['query' => false, 'error' => 'No existen permisos en el sistema.'];
+        }
+    }
+
     // Metodo para registrar un permiso en la tabla de la DB: 
     public function store(Request $request)
     {
@@ -63,7 +106,7 @@ class PermisoController extends Controller
                 $role_id = $validateRole['role']['id'];
 
                 // Realizamos la consulta a la tabla de la DB:
-                $model = Permiso::where('permission_name', $permission_name);
+                $model = Permiso::where('permission_name', $permission_name)->where('role_id', $role_id);
 
                 // Validamos que no exista el registro en la tabla de la DB:
                 $validatePemission = $model->first();
@@ -164,6 +207,81 @@ class PermisoController extends Controller
             return ['query' => false, 'error' => $validateRole['error']];
         }
 
+    }
+
+    // Metodo para retornar todos los permisos de un role especifico: 
+    public function permissions($role)
+    {
+        // Si los argumentos contienen caracteres de tipo mayusculas, los pasamos a minusculas. Para seguir una nomenclatura estandar:
+        $role_name = strtolower($role);
+
+        // Instanciamos el controlador del modelo 'Role'. Para validar que exista el role: 
+        $roleController = new RoleController; 
+
+        // Validamos que exista el role: 
+        $validateRole = $roleController->show(role: $role_name);
+
+        // Si existe, extraemos su 'id' y realizamos la consulta a la DB: 
+        if($validateRole['query']){
+
+            // Extraemos el id:
+            $role_id = $validateRole['role']['id'];
+
+            
+            // Realizamos la consulta a la tabla de la DB:
+            $model = DB::table('permisos')
+
+                    // Filtramos el registro requerido:
+                    ->where('role_id', $role_id);
+
+            // Validamos que existan los registro en la tabla de la DB:
+            $validatePemission = $model->get();
+
+            // Si existe, agrupamos los permisos por roles y retornamos los registros: 
+            if(count($validatePemission) != 0){
+
+                // Realizamos la consulta a la tabla del modelo 'Permission':
+                $registers = $model->join('roles', 'roles.id_role', '=', 'permisos.role_id')
+                       
+                                    // Seleccionamos los campos que se requieren: 
+                                    ->select('permisos.permission_name as permission', 'roles.role_name as role')
+
+                                    // Obtenemos todos los permisos: 
+                                    ->get();
+
+            
+                // Si existen usuarios asignados a ese role, los retornamos: 
+                if(count($registers) != 0){
+
+                    // Declaramos el array 'permissions', para almacenar los permissions con indice numerico: 
+                    $permissions = [];
+
+                    // Iteramos los usuarios almacenados en el array 'registers': 
+                    foreach($registers as $permission){
+
+                        // Almacenamos el role en el array 'permissions': 
+                        $permissions[] = $permission;
+
+                    }
+
+                    // Retornamos la respuesta:
+                    return ['query' => true, 'permissions' => $permissions];
+
+                }else{
+                // Retornamos el error:
+                return ['query' => false, 'error' => 'No existen permisos con ese role.'];
+                }
+
+            }else{
+                // Retornamos el error:
+                return ['query' => false, 'error' => 'No existen permisos en el sistema.'];
+            }
+
+        }else{
+            // Retornamos el error:
+            return ['query' => false, 'error' => $validateRole['error']];
+        }
+        
     }
 
     // Metodo para eliminar un permiso: 

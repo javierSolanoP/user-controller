@@ -43,7 +43,7 @@ trait MethodUser {
 
                 }else{
                     // Retornamos el error:
-                    die('{"register": false, "Error": "name: no puede contener datos alfanumericos."}');
+                    die('{"register": false, "Error": "name: no puede contener datos numericos."}');
                 }
             }
 
@@ -57,7 +57,7 @@ trait MethodUser {
 
                 }else{
                     // Retornamos el error:
-                    die('{"register": false, "Error": "last_name: no puede contener datos alfanumericos."}');
+                    die('{"register": false, "Error": "last_name: no puede contener datos numericos."}');
                 }
             }
 
