@@ -25,7 +25,7 @@ trait MethodPermission {
 
                 }else{
                     // Retornamos el error:
-                    die('{"register": false, "Error": "permission_name: no puede contener datos alfanumericos."}');
+                    return ["register" => false, "error" => "permission_name: no puede contener datos alfanumericos."];
                 }
             }
         }

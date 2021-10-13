@@ -29,11 +29,11 @@ class UsuarioController extends Controller
         if(count($validateUser) != 0){
 
             // Retornamos la respuesta:
-            return ['query' => true, 'users' => $validateUser];
+            return response(content: ['query' => true, 'users' => $validateUser], status: 200);
 
         }else{
             // Retornamos el error:
-            return ['query' => false, 'error' => 'No existen usuarios en el sistema.'];
+            return response(content: ['query' => false, 'error' => 'No existen usuarios en el sistema.'], status: 404);
         }
     }
 
@@ -61,11 +61,13 @@ class UsuarioController extends Controller
             // Validamos que exista el role: 
             $validateRole = $roleController->show(role: $role_name);
 
+            $contentRole = $validateRole->getOriginalContent();
+
             // Si existe, extraemos su 'id' y validamos que no exista el usuario: 
-            if($validateRole['query']){
+            if($contentRole['query']){
 
                 // Extraemos su id: 
-                $role_id = $validateRole['role']['id'];
+                $role_id = $contentRole['role']['id'];
 
                 // Realizamos la consulta a la tabla de la DB:
                 $model = Usuario::where('identification', $request->input(key: 'identification'));
@@ -108,48 +110,48 @@ class UsuarioController extends Controller
                                              'role_id' => $role_id]);
 
                             // Retornamos la respuesta:
-                            return $validateUserArgm;
+                            return response(content: $validateUserArgm, status: 201);
 
                         }catch(Exception $e){
                             // Retornamos el error:
-                            return ['register' => false, 'error' => $e->getMessage()];
+                            return response(content: ['register' => false, 'error' => $e->getMessage()], status: 500);
                         }
 
                     }else{
                         // Retornamos el error:
-                        return $validateUserArgm;
+                        return response(content: $validateUserArgm, status: 403);
                     }
 
                 }else{
                     // Retornamos el error:
-                    return ['register' => false, 'error' => 'Ya existe ese usuario en el sistema.'];
+                    return response(content: ['register' => false, 'error' => 'Ya existe ese usuario en el sistema.'], status: 403);
                 }
 
             }else{
                 // Retornamos el error:
-                return ['register' => false, 'error' => $validateRole['error']];
+                return response(content: ['register' => false, 'error' => $contentRole['error']], status: 404);
             }
 
         }else{
             // Retornamos el error:
-            return ['register' => false, 'error' => "Campo 'identification' o 'name' o 'last_name' o 'email' o 'password' o 'confirmPassword' o 'telephone' o 'role': NO deben estar vacios."];
+            return response(content: ['register' => false, 'error' => "Campo 'identification' o 'name' o 'last_name' o 'email' o 'password' o 'confirmPassword' o 'telephone' o 'role': NO deben estar vacios."], status: 403);
         }
     }
 
     // Metodo para retornar un usuario especifico: 
-    public function show($identification)
+    public function show($email)
     {
         // Realizamos la consulta a la tabla de la DB:
         $model = DB::table('usuarios')
 
                 // Filtramos el usuario requerido: 
-                ->where('identification', $identification)
+                ->where('email', $email)
 
                 // Realizamos la consulta a la tabla del modelo 'Role: 
                 ->join('roles', 'roles.id_role', '=', 'usuarios.role_id')
 
                 // Seleccionamos los campos que se requiren: 
-                ->select('usuarios.identification', 'usuarios.name', 'usuarios.last_name', 'usuarios.email', 'usuarios.telephone', 'roles.role_name as role');
+                ->select('usuarios.identification', 'usuarios.name', 'usuarios.last_name', 'usuarios.email', 'usuarios.telephone', 'usuarios.session', 'roles.role_name as role');
 
         // Validamos que exista el registro en la tabla de la DB:
         $validateUser = $model->first();
@@ -158,11 +160,11 @@ class UsuarioController extends Controller
         if($validateUser){
 
             // Retornamos la respuesta:
-            return ['query' => true, 'user' => $validateUser];
+            return response(content: ['query' => true, 'user' => $validateUser], status: 200);
 
         }else{
             // Retornamos el error:
-            return ['query' => false, 'error' => 'No existe ese usuario en el sistema.'];
+            return response(content: ['query' => false, 'error' => 'No existe ese usuario en el sistema.'], status: 404);
         }
     }
 
@@ -188,12 +190,14 @@ class UsuarioController extends Controller
  
             // Validamos que exista el role: 
             $validateRole = $roleController->show(role: $role_name);
+
+            $contentRole = $validateRole->getOriginalContent();
  
             // Si existe, extraemos su 'id' y validamos que no exista el usuario: 
-            if($validateRole['query']){
+            if($contentRole['query']){
  
                 // Extraemos su id: 
-                $role_id = $validateRole['role']['id'];
+                $role_id = $contentRole['role']['id'];
  
                 // Realizamos la consulta a la tabla de la DB:
                 $model = Usuario::where('identification', $identification);
@@ -233,31 +237,93 @@ class UsuarioController extends Controller
                                             'role_id' => $role_id]);
  
                             // Retornamos la respuesta:
-                            return $validateUserArgm;
+                            return response(content: $validateUserArgm, status: 204);
  
                         }catch(Exception $e){
                             // Retornamos el error:
-                            return ['register' => false, 'error' => $e->getMessage()];
+                            return response(content: ['register' => false, 'error' => $e->getMessage()], status: 500);
                         }
  
                     }else{
                         // Retornamos el error:
-                        return $validateUserArgm;
+                        return response(content: $validateUserArgm, status: 403);
                     }
  
                 }else{
                     // Retornamos el error:
-                    return ['register' => false, 'error' => 'No existe ese usuario en el sistema.'];
+                    return response(content: ['register' => false, 'error' => 'No existe ese usuario en el sistema.'], status: 404);
                 }
  
             }else{
                 // Retornamos el error:
-                return ['register' => false, 'error' => $validateRole['error']];
+                return response(content: ['register' => false, 'error' => $contentRole['error']], status: 404);
             }
  
         }else{
             // Retornamos el error:
-            return ['register' => false, 'error' => "Campo 'name' o 'last_name' o 'email' o 'password' o 'confirmPassword' o 'telephone' o 'role': NO deben estar vacios."];
+            return response(content: ['register' => false, 'error' => "Campo 'name' o 'last_name' o 'email' o 'password' o 'confirmPassword' o 'telephone' o 'role': NO deben estar vacios."], status: 403);
+        }
+    }
+
+    // Metodo para actualizar la sesion del usuario: 
+    public function updateSession($email, $session)
+    {
+        // Realizamos la consulta a la tabla de la DB:
+        $model = Usuario::where('email', $email);
+
+        // Validamos que exista el registro en la tabla de la DB:
+        $validateUser = $model->first();
+
+        // Si existe, actualizamos la sesion: 
+        if($validateUser){
+
+            try{
+
+                // Actualizamos la sesion: 
+                $model->update(['session' => $session]);
+
+                // Retornamos la respuesta:
+                return response(content: ['update' => true], status: 204);
+
+            }catch(Exception $e){
+                // Retornamos el error:
+                return response(content: ['update' => false, 'error' => $e->getMessage()], status: 500);
+            }
+
+        }else{
+            // Retornamos el error:
+            return response(content: ['update' => false, 'error' => 'No existe ese usuario en el sistema.'], status: 404);
+        }
+    }
+
+    // Metodo para aniadir la URL del avatar del usuario: 
+    public function addAvatar($email, $url)
+    {
+        // Realizamos la consulta a la tabla de la DB:
+        $model = Usuario::where('email', $email);
+
+        // Validamos que exista el registro en la tabla de la DB:
+        $validateUser = $model->first();
+
+        // Si existe, actualizamos el campo 'avatar' de la tabla de la DB: 
+        if($validateUser){
+
+            try{
+
+                // Actualizamos el campo 'avatar': 
+                $model->update(['avatar' => $url]);
+
+                // Retornamos la respuesta:
+                return response(content: ['add' => true], status: 204); 
+
+            }catch(Exception $e){
+                // Retornamos el error:
+                return response(content: ['add' => false, 'error' => $e->getMessage()], status: 500);
+            }
+
+        }else{
+            // Retornamos el error:
+            return response(content: ['add' => false, 'error' => 'No existe ese usuario en el sistema.'], status: 404);
         }
     }
 
@@ -279,16 +345,16 @@ class UsuarioController extends Controller
                 $model->delete();
 
                 // Retornamos la respuesta:
-                return ['delete' => true];
+                return response(content: ['delete' => true], status: 204);
 
             }catch(Exception $e){
                 // Retornamos el error:
-                return ['delete' => false, 'error' => $e->getMessage()];
+                return response(content: ['delete' => false, 'error' => $e->getMessage()], status: 500);
             }
 
         }else{
             // Retornamos el error:
-            return ['delete' => false, 'error' => 'No existe ese usuario en el sistema.'];
+            return response(content: ['delete' => false, 'error' => 'No existe ese usuario en el sistema.'], status: 404);
         }
     }
 }

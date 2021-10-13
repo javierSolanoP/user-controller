@@ -25,7 +25,7 @@ trait MethodRole {
 
                 }else{
                     // Retornamos el error:
-                    die('{"register": false, "Error": "role_name: no puede contener datos alfanumericos."}');
+                    return ["register" => false, "error" => "role_name: no puede contener datos alfanumericos."];
                 }
             }
         }

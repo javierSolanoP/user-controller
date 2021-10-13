@@ -29,7 +29,7 @@ trait MethodUser {
 
                 }else{
                     // Retornamos el error:
-                    die('{"register": false, "Error": "identification: no puede contener datos alfanumericos."}');
+                    return ["register" => false, "error" => "identification: no puede contener datos alfanumericos."];
                 }
             }
             
@@ -43,7 +43,7 @@ trait MethodUser {
 
                 }else{
                     // Retornamos el error:
-                    die('{"register": false, "Error": "name: no puede contener datos numericos."}');
+                    return ["register" => false, "error" => "name: no puede contener datos numericos."];
                 }
             }
 
@@ -57,7 +57,7 @@ trait MethodUser {
 
                 }else{
                     // Retornamos el error:
-                    die('{"register": false, "Error": "last_name: no puede contener datos numericos."}');
+                    return ["register" => false, "error" => "last_name: no puede contener datos numericos."];
                 }
             }
 
@@ -71,7 +71,7 @@ trait MethodUser {
 
                 }else{
                     // Retornamos el error:
-                    die('{"register": false, "Error": "email: no es un dato tipo email."}');
+                    return ["register" => false, "error" => "email: no es un dato tipo email."];
                 }
             }
 
@@ -85,7 +85,7 @@ trait MethodUser {
 
                 }else{
                     // Retornamos el error:
-                    die('{"register": false, "Error": "La passwords no coinciden."}');
+                    return ["register" => false, "error" =>"La passwords no coinciden."];
                 }
             }
 
@@ -99,7 +99,7 @@ trait MethodUser {
 
                 }else{
                     // Retornamos el error:
-                    die('{"register": false, "Error": "telephone: no puede contener datos alfanumericos."}');
+                    return ["register" => false, "error" => "telephone: no puede contener datos alfanumericos."];
                 }
             }
 
@@ -107,7 +107,7 @@ trait MethodUser {
             try{
                 return ['register' => true, 'fields' => $valid];
             }catch(Exception $e){
-                return ['register' => false, 'Error' => $e->getMessage()];
+                return ['register' => false, 'error' => $e->getMessage()];
             }
 
         }

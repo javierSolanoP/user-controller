@@ -30,11 +30,11 @@ class PermisoController extends Controller
         if(count($validatePemission) != 0){
 
             // Retornamos la respuesta:
-            return ['query' => true, 'permissions' => $validatePemission];
+            return response(content: ['query' => true, 'permissions' => $validatePemission], status: 200);
 
         }else{
             // Retornamos el error:
-            return ['query' => false, 'error' => 'No existen permisos en el sistema.'];
+            return response(content: ['query' => false, 'error' => 'No existen permisos en el sistema.'], status: 404);
         }
 
     }
@@ -75,11 +75,11 @@ class PermisoController extends Controller
             }
 
             // Retornamos la respuesta:
-            return ['query' => true, 'roles' => $roles];
+            return response(content: ['query' => true, 'roles' => $roles], status: 200);
 
         }else{
             // Retornamos el error:
-            return ['query' => false, 'error' => 'No existen permisos en el sistema.'];
+            return response(content: ['query' => false, 'error' => 'No existen permisos en el sistema.'], status: 404);
         }
     }
 
@@ -99,11 +99,13 @@ class PermisoController extends Controller
             // Validamos que exista el role: 
             $validateRole = $roleController->show(role: $role_name);
 
+            $contentRole = $validateRole->getOriginalContent();
+
             // Si existe, extraemos su 'id' y validamos que no exista ese permiso: 
-            if($validateRole['query']){
+            if($contentRole['query']){
 
                 // Extraemos el id el role: 
-                $role_id = $validateRole['role']['id'];
+                $role_id = $contentRole['role']['id'];
 
                 // Realizamos la consulta a la tabla de la DB:
                 $model = Permiso::where('permission_name', $permission_name)->where('role_id', $role_id);
@@ -124,7 +126,7 @@ class PermisoController extends Controller
                     $validatePemissionArgm = $permission->validateData();
 
                     // Si los argumentos han sido validados, realizamos el registro: 
-                    if($validatePemissionArgm){
+                    if($validatePemissionArgm['register']){
 
                         try{
 
@@ -133,31 +135,31 @@ class PermisoController extends Controller
                                              'role_id' => $role_id]);
 
                             // Retornamos la respuesta:
-                            return $validatePemissionArgm;
+                            return response(content: $validatePemissionArgm, status: 201);
 
                         }catch(Exception $e){
                             // Retornamos el error:
-                            return ['register' => false, 'error' => $e->getMessage()];
+                            return response(content: ['register' => false, 'error' => $e->getMessage()], status: 500);
                         }
 
                     }else{
                         // Retornamos el error:
-                        return $validatePemissionArgm;
+                        return response(content: $validatePemissionArgm, status: 403);
                     }
 
                 }else{
                     // Retornamos el error:
-                    return ['register' => false, 'error' => 'Ya existe ese permiso en el sistema.'];
+                    return response(content: ['register' => false, 'error' => 'Ya existe ese permiso en el sistema.'], status: 403);
                 }
 
             }else{
                 // Retornamos el error:
-                return ['register' => false, 'error' => $validateRole['error']];
+                return response(content: ['register' => false, 'error' => $contentRole['error']], status: 404);
             }
 
         }else{
             // Retornamos el error:
-            return ['register' => false, 'error' => "Campo 'permission_name' o 'role_name': NO deben estar vacios."];
+            return response(content: ['register' => false, 'error' => "Campo 'permission_name' o 'role_name': NO deben estar vacios."], status: 403);
         }
     }
 
@@ -173,8 +175,10 @@ class PermisoController extends Controller
         // Validamos que exista el role: 
         $validateRole = $roleController->show(role: $role_name);
 
+        $contentRole = $validateRole->getOriginalContent();
+
         // Si existe, realizamos la consulta a la DB: 
-        if($validateRole['query']){
+        if($contentRole['query']){
 
             // Realizamos la consulta a la tabla de la DB:
             $model = DB::table('roles')
@@ -195,16 +199,16 @@ class PermisoController extends Controller
             if(count($validatePemission) != 0){
 
                 // Retornamos la respuesta:
-                return ['query' => true, 'permission' => $validatePemission];
+                return response(content: ['query' => true, 'permission' => $validatePemission], status: 200);
 
             }else{
                 // Retornamos el error:
-                return ['query' => false, 'error' => 'No existen permisos para ese role en el sistema.'];
+                return response(content: ['query' => false, 'error' => 'No existen permisos para ese role en el sistema.'], status: 404);
             }
 
         }else{
             // Retornamos el error:
-            return ['query' => false, 'error' => $validateRole['error']];
+            return response(content: ['query' => false, 'error' => $contentRole['error']], status: 404);
         }
 
     }
@@ -221,12 +225,13 @@ class PermisoController extends Controller
         // Validamos que exista el role: 
         $validateRole = $roleController->show(role: $role_name);
 
+        $contentRole = $validateRole->getOriginalContent();
+
         // Si existe, extraemos su 'id' y realizamos la consulta a la DB: 
-        if($validateRole['query']){
+        if($contentRole['query']){
 
             // Extraemos el id:
-            $role_id = $validateRole['role']['id'];
-
+            $role_id = $contentRole['role']['id'];
             
             // Realizamos la consulta a la tabla de la DB:
             $model = DB::table('permisos')
@@ -265,21 +270,21 @@ class PermisoController extends Controller
                     }
 
                     // Retornamos la respuesta:
-                    return ['query' => true, 'permissions' => $permissions];
+                    return response(content: ['query' => true, 'permissions' => $permissions], status: 200);
 
                 }else{
-                // Retornamos el error:
-                return ['query' => false, 'error' => 'No existen permisos con ese role.'];
+                    // Retornamos el error:
+                    return response(content: ['query' => false, 'error' => 'No existen permisos con ese role.'], status: 404);
                 }
 
             }else{
                 // Retornamos el error:
-                return ['query' => false, 'error' => 'No existen permisos en el sistema.'];
+                return response(content: ['query' => false, 'error' => 'No existen permisos en el sistema.'], status: 404);
             }
 
         }else{
             // Retornamos el error:
-            return ['query' => false, 'error' => $validateRole['error']];
+            return response(content: ['query' => false, 'error' => $contentRole['error']], status: 404);
         }
         
     }
@@ -297,11 +302,13 @@ class PermisoController extends Controller
         // Validamos que exista el role: 
         $validateRole = $roleController->show(role: $role_name);
 
+        $contentRole = $validateRole->getOriginalContent();
+
         // Si existe, extraemos su 'id' y realizamos la consulta a la DB: 
-        if($validateRole['query']){
+        if($contentRole['query']){
 
             // Extraemos su id: 
-            $role_id = $validateRole['role']['id'];
+            $role_id = $contentRole['role']['id'];
 
             // Realizamos la consulta a la tabla de la DB:
             $model = Permiso::where('permission_name', $permission_name)->where('role_id', $role_id);
@@ -318,21 +325,21 @@ class PermisoController extends Controller
                     $model->delete();
 
                     // Retornamos la respuesta:
-                    return ['delete' => true];
+                    return response(content: ['delete' => true], status: 204);
 
                 }catch(Exception $e){
                     // Retornamos el error:
-                    return ['delete' => false, 'error' => $e->getMessage()];
+                    return response(content: ['delete' => false, 'error' => $e->getMessage()], status: 500);
                 }
 
             }else{
                 // Retornamos el error:
-                return ['delete' => false, 'error' => 'No existe ese permiso en el sistema.'];
+                return response(content: ['delete' => false, 'error' => 'No existe ese permiso en el sistema.'], status: 404);
             }   
 
         }else{
             // Retornamos el error:
-            return ['delete' => false, 'error'=> $validateRole['error']];
+            return response(content: ['delete' => false, 'error'=> $contentRole['error']], status: 404);
         }
 
     }

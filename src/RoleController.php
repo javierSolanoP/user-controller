@@ -23,11 +23,11 @@ class RoleController extends Controller
         if(count($validateRole) != 0){
 
             // Retornamos la respuesta:
-            return ['query' => true, 'roles' => $validateRole];
+            return response(content: ['query' => true, 'roles' => $validateRole], status: 200);
 
         }else{
             // Retornamos el error:
-            return ['query' => true, 'error' => 'No existen roles en el sistema.'];
+            return response(content: ['query' => true, 'error' => 'No existen roles en el sistema.'], status: 404);
         }
     }
 
@@ -70,16 +70,16 @@ class RoleController extends Controller
                }
 
                // Retornamos la respuesta:
-               return ['query' => true, 'roles' => $users];
+               return response(content: ['query' => true, 'roles' => $users], status: 200);
 
            }else{
                // Retornamos el error:
-               return ['query' => false, 'error' => 'No existen usuarios con ese role.'];
+               return response(content: ['query' => false, 'error' => 'No existen usuarios con ese role.'], status: 404);
            }
 
        }else{
            // Retornamos el error:
-           return ['query' => false, 'error' => 'No existen roles en el sistema.'];
+           return response(content: ['query' => false, 'error' => 'No existen roles en el sistema.'], status: 404);
        }
     }
 
@@ -119,26 +119,26 @@ class RoleController extends Controller
                         Role::create(['role_name' => $role_name]);
                         
                         // Retornamos la respuesta:
-                        return $validateRoleArgm;
+                        return response(content: $validateRoleArgm, status: 201);
 
                     }catch(Exception $e){
                         // Retornamos el error:
-                        return ['register' => false, 'error' => $e->getMessage()];
+                        return response(content: ['register' => false, 'error' => $e->getMessage()], status: 500);
                     }
 
                 }else{
                     // Retornamos el error:
-                    return $validateRoleArgm;
+                    return response(content: $validateRoleArgm, status: 403);
                 }
 
             }else{
                 // Retornamos el error:
-                return ['register' => false, 'error' => 'Ya existe ese role en el sistema.'];
+                return response(content: ['register' => false, 'error' => 'Ya existe ese role en el sistema.'], status: 403);
             }
 
         }else{
             // Retornamos el error:
-            return ['registrer' => false, 'error' => "Campo 'role_name': NO debe estar vacio."];
+            return response(content: ['registrer' => false, 'error' => "Campo 'role_name': NO debe estar vacio."], status: 403);
         }
     }
 
@@ -158,11 +158,11 @@ class RoleController extends Controller
         if($validateRole){
 
             // Retornamos la respuesta:
-            return ['query' => true, 'role' => $validateRole];
+            return response(content: ['query' => true, 'role' => $validateRole], status: 200);
 
         }else{
             // Retornamos el error:
-            return ['query' => false, 'error' => 'No existe ese role en el sistema.'];
+            return response(content: ['query' => false, 'error' => 'No existe ese role en el sistema.'], status: 404);
         }
     }
 
@@ -208,19 +208,16 @@ class RoleController extends Controller
                 }
 
                 // Retornamos la respuesta:
-                return ['query' => true, 'roles' => $users];
+                return response(content: ['query' => true, 'roles' => $users], status: 200);
 
             }else{
                 // Retornamos el error:
-                return ['query' => false, 'error' => 'No existen usuarios con ese role.'];
+                return response(content: ['query' => false, 'error' => 'No existen usuarios con ese role.'], status: 404);
             }
-
-            // Retornamos la respuesta:
-            return ['query' => true, 'role' => $model];
 
         }else{
             // Retornamos el error:
-            return ['query' => false, 'error' => 'No existe ese role en el sistema.'];
+            return response(content: ['query' => false, 'error' => 'No existe ese role en el sistema.'], status: 404);
         }
 
     }
@@ -305,16 +302,16 @@ class RoleController extends Controller
                 $model->delete();
 
                 // Retornamos la respuesta:
-                return ['delete' => true];
+                return response(content: ['delete' => true], status: 204);
 
             }catch(Exception $e){
                 // Retornamos el error:
-                return ['delete' => false , 'error' => $e->getMessage()];
+                return response(content: ['delete' => false , 'error' => $e->getMessage()], status: 500);
             }
 
         }else{
             // Retornamos el error:
-            return ['delete' => false, 'error' => 'No existe ese role en el sistema.'];
+            return response(content: ['delete' => false, 'error' => 'No existe ese role en el sistema.'], status: 404);
         }
     }
 
