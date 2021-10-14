@@ -173,7 +173,7 @@ class RoleController extends Controller
         $role_name = strtolower($role);
 
         // Realizamos la consulta a la tabla de la DB:
-        $model = DB::table('roles')->where('role_name', $role_name);
+        $model = Role::where('role_name', $role);
 
         // Validamos que exista el role:
         $validateRole = $model->first();
@@ -181,17 +181,23 @@ class RoleController extends Controller
         // Si existe, realizamos la consulta a la tablas de los modelos 'User' y 'Permission':
         if($validateRole){
 
-            // Realizamos la consulta a la tabla del modelo 'User': 
-            $registers = $model ->join('usuarios', 'roles.id_role', '=', 'usuarios.role_id')
+            // Realizamos la consulta a la tablas del modelo 'Role' y 'User': 
+            $registers = DB::table('roles')
 
-                                // Seleccionamos los campos que se requieren: 
-                                ->select('roles.role_name as role', 'usuarios.identification', 'usuarios.name', 'usuarios.last_name', 'usuarios.email', 'usuarios.telephone')
+                            // Filtramos por el role: 
+                            ->where('role_name', $role_name)
 
-                                // Obtenemos los usuarios que pertenzcan al role: 
-                                ->get()
+                            // Realizamos la consulta a la tablad el modelo 'User': 
+                            ->join('usuarios', 'roles.id_role', '=', 'usuarios.role_id')
 
-                                // Agrupamos por roles: 
-                                ->groupBy('role');
+                            // Seleccionamos los campos que se requieren: 
+                            ->select('roles.role_name as role', 'usuarios.identification', 'usuarios.name', 'usuarios.last_name', 'usuarios.email', 'usuarios.telephone')
+
+                            // Obtenemos los usuarios que pertenzcan al role: 
+                            ->get()
+
+                            // Agrupamos por roles: 
+                            ->groupBy('role');
 
             // Si existen usuarios asignados a ese role, los retornamos: 
             if(count($registers) != 0){
